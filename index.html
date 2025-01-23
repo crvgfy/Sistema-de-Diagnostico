@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Diagnóstico</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f4f9;
+            margin: 0; padding: 0;
+        }
+        header, footer {
+            background: #007BFF; color: #fff;
+            text-align: center; padding: 10px 20px;
+        }
+        footer {
+            background: #f1f1f1; color: #333;
+            position: fixed; bottom: 0; width: 100%;
+        }
+        .search-container {
+            text-align: center; margin: 20px 0;
+        }
+        .search-container input, .search-container button {
+            font-size: 16px; padding: 10px;
+            border-radius: 4px; border: 2px solid #007BFF;
+        }
+        .search-container input {
+            width: 60%;
+        }
+        .search-container button {
+            background: #007BFF; color: #fff;
+            border: none; cursor: pointer;
+        }
+        .search-container button:hover {
+            background: #0056b3;
+        }
+        .results {
+            text-align: center; margin-top: 30px;
+        }
+        .result-item {
+            background: #fff; padding: 15px; margin: 10px;
+            border: 1px solid #ddd; border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .result-item h3 {
+            color: #007BFF; margin-top: 0;
+        }
+    </style>
+</head>
+<body>
+<header>
+    <h1>Sistema de Diagnóstico</h1>
+</header>
+
+<div class="search-container">
+    <h2>Encontre seu problema</h2>
+    <input type="text" id="search-input" placeholder="Digite o problema ou solução...">
+    <button onclick="buscarDiagnostico()">Pesquisar</button>
+</div>
+
+<div id="results-container" class="results">
+    <!-- Resultados exibidos aqui -->
+</div>
+
+<footer>
+    <p>&copy; 2024 Sistema de Diagnóstico</p>
+</footer>
+
+<script>
+    async function buscarDiagnostico() {
+        const searchTerm = document.getElementById("search-input").value.trim();
+        const resultsContainer = document.getElementById("results-container");
+
+        resultsContainer.innerHTML = ""; // Limpa resultados anteriores
+
+        if (!searchTerm) {
+            resultsContainer.innerHTML = "<p>Digite um problema para buscar.</p>";
+            return;
+        }
+
+        try {
+            // Realiza uma requisição ao backend
+            const response = await fetch(`/diagnostico?problema=${encodeURIComponent(searchTerm)}`);
+            const data = await response.json();
+
+            if (response.ok) {
+                // Exibe a solução encontrada
+                resultsContainer.innerHTML = `
+                    <div class="result-item">
+                        <h3>Problema: ${data.problema}</h3>
+                        <p>Solução: ${data.solucao}</p>
+                    </div>`;
+            } else {
+                resultsContainer.innerHTML = `<p>${data.erro}</p>`;
+            }
+        } catch (error) {
+            resultsContainer.innerHTML = "<p>Erro ao buscar o diagnóstico. Tente novamente mais tarde.</p>";
+        }
+    }
+</script>
+</body>
+</html>
